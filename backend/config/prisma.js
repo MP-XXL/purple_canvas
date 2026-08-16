@@ -1,6 +1,7 @@
-import "dotenv/config";
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "../generated/prisma/client";
+const dotenv = require("dotenv/config");
+const { PrismaMariaDb }  = require("@prisma/adapter-mariadb");
+const { PrismaClient } =  require("../generated/prisma");
+
 
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST,
@@ -11,4 +12,4 @@ const adapter = new PrismaMariaDb({
 });
 const prisma = new PrismaClient({ adapter });
 
-export { prisma };
+module.exports = prisma ;
