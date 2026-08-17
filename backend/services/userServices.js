@@ -16,7 +16,7 @@ class UserServices {
 
         const result = userSchema.safeParse(userData)
         if (!result.success){
-            return result.error.message
+            throw new Error(`${result.error}`)
         }
 
         const passwordSchema = z
@@ -29,7 +29,7 @@ class UserServices {
         
         const validatedPassword = passwordSchema.safeParse(userData.password)
         if(!validatedPassword.success){
-            return validatedPassword.error.message
+            throw new Error(`${validatedPassword.error}`)
         }
 
 
@@ -39,7 +39,26 @@ class UserServices {
 
         result.data.password = hashedPassword;
 
-        return result
+        const foundUser = await prisma.users.findUnique({
+            where: {
+                email: result.data.email
+            }
+        })
+
+        if (foundUser != null){
+            throw new Error(`Email not accepted`)
+        }
+
+        const createdUser = await prisma.users.create({
+            data:{
+                first_name: result.data.first_name, 
+                last_name: result.data.last_name,
+                email: result.data.email, 
+                password: result.data.password
+            }
+        })
+
+        return`Account created successfully! Welcome ${createdUser.first_name}`
 
 
     }
